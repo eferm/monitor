@@ -2,6 +2,7 @@
 
 import asyncio
 import hmac
+import json
 import os
 import smtplib
 import ssl
@@ -13,7 +14,7 @@ from typing import Annotated, ClassVar
 
 from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.responses import PlainTextResponse
-from pydantic import BaseModel, ConfigDict, EmailStr, NameEmail, TypeAdapter
+from pydantic import BaseModel, ConfigDict, EmailStr, JsonValue, NameEmail, TypeAdapter
 
 
 class Config(BaseModel):
@@ -42,6 +43,12 @@ class TailscaleEvent(BaseModel):
     type: str
     tailnet: str
     message: str
+    # Event-specific details (actor, device, policy, ...); absent on some events.
+    data: dict[str, JsonValue] = {}
+
+    def render(self) -> str:
+        header = f"{self.timestamp} {self.tailnet} {self.type}: {self.message}"
+        return f"{header}\n{json.dumps(self.data, indent=2)}"
 
 
 tailscale_events = TypeAdapter(list[TailscaleEvent])
@@ -96,8 +103,5 @@ async def tailscale(
     await asyncio.to_thread(
         send,
         "Tailscale: " + ", ".join(dict.fromkeys(event.type for event in events)),
-        "\n".join(
-            f"{event.timestamp} {event.tailnet} {event.type}: {event.message}"
-            for event in events
-        ),
+        "\n\n".join(event.render() for event in events),
     )
