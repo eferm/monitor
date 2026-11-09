@@ -47,8 +47,14 @@ class TailscaleEvent(BaseModel):
     data: dict[str, JsonValue] = {}
 
     def render(self) -> str:
-        fields = [self.type, self.message, self.tailnet, str(self.timestamp)]
-        return "\n".join([*fields, json.dumps(self.data, indent=2)])
+        return "\n".join(
+            [
+                f"{self.type}: {self.message}",
+                f"Tailnet: {self.tailnet}",
+                str(self.timestamp),
+                json.dumps(self.data, indent=2),
+            ]
+        )
 
 
 tailscale_events = TypeAdapter(list[TailscaleEvent])
@@ -99,9 +105,9 @@ async def tailscale(
     verify_tailscale(tailscale_webhook_signature, body)
     events = tailscale_events.validate_json(body)
     # smtplib blocks; a worker thread keeps it off the event loop.
-    # dict.fromkeys dedupes event types while keeping first-seen order.
+    # dict.fromkeys dedupes event messages while keeping first-seen order.
     await asyncio.to_thread(
         send,
-        "Tailscale: " + ", ".join(dict.fromkeys(event.type for event in events)),
+        "Tailscale: " + ", ".join(dict.fromkeys(event.message for event in events)),
         "\n\n".join(event.render() for event in events),
     )
