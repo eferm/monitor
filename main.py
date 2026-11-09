@@ -2,6 +2,7 @@
 
 import asyncio
 import hmac
+import json
 import os
 import smtplib
 import ssl
@@ -47,7 +48,7 @@ class TailscaleEvent(BaseModel):
 
     def render(self) -> str:
         header = f"{self.timestamp} {self.tailnet} {self.type}: {self.message}"
-        return "\n".join([header, *(f"{k}: {v}" for k, v in self.data.items())])
+        return f"{header}\n{json.dumps(self.data, indent=2)}"
 
 
 tailscale_events = TypeAdapter(list[TailscaleEvent])
