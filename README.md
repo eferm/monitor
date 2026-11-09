@@ -48,7 +48,7 @@ Cloudflare's values. Any SMTPS (port 465) provider works.
 ## Verify a deployment
 
 In the Tailscale admin console, open the webhook and click **Test endpoint →
-Send test event**. An email titled "Tailscale: …" arriving within seconds
+Send test event**. An email titled "[Tailscale] …" arriving within seconds
 confirms the whole path: Tailscale → your proxy → signature check →
 Cloudflare → inbox.
 
