@@ -47,5 +47,7 @@ service-side setup in `README.md`.
 ## Deployment
 
 Docker Compose, bound to `127.0.0.1:8002`, behind an HTTPS proxy or tunnel.
+Uvicorn trusts `X-Forwarded-*` from `FORWARDED_ALLOW_IPS` (compose default:
+the Docker network ranges); the client IP is used only for access logs.
 Cloudflare Email Service SMTP (`smtp.mx.cloudflare.net:465`, implicit TLS,
 username `api_token`) for outgoing mail.

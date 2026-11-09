@@ -20,6 +20,11 @@ docker compose up -d --build
 Compose binds the app to `127.0.0.1:8002`. Put an HTTPS reverse proxy or
 Cloudflare Tunnel in front of it, e.g. at `https://monitor.example.com`.
 
+Uvicorn runs with `--proxy-headers`, so logs show the client IP from
+`X-Forwarded-For`. `FORWARDED_ALLOW_IPS` names the proxy hops trusted to set
+it; compose sets the Docker network ranges. On other hosting, set it to the
+address the platform's proxy connects from.
+
 ### Outgoing email (Cloudflare Email Service)
 
 1. In the Cloudflare dashboard, open **Email Service → Email Sending** and
