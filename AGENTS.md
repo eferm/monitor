@@ -24,8 +24,8 @@
   before parsing it. The signature check is the only access control.
 - Payloads are validated with Pydantic models declaring only the fields the
   email uses; extra fields are ignored. Each event renders as `type`, `message`,
-  `tailnet`, `timestamp`, and single-line JSON `data`, one per line, so every
-  event type works without code changes.
+  `tailnet`, and `timestamp` on one line each, then `data` as indented JSON,
+  so every event type works without code changes.
 - Event selection belongs to the sending service's subscription settings, not
   to code here. Each request produces one email.
 

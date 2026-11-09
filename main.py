@@ -48,7 +48,7 @@ class TailscaleEvent(BaseModel):
 
     def render(self) -> str:
         fields = [self.type, self.message, self.tailnet, str(self.timestamp)]
-        return "\n".join([*fields, json.dumps(self.data)])
+        return "\n".join([*fields, json.dumps(self.data, indent=2)])
 
 
 tailscale_events = TypeAdapter(list[TailscaleEvent])
