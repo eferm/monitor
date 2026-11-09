@@ -47,8 +47,8 @@ class TailscaleEvent(BaseModel):
     data: dict[str, JsonValue] = {}
 
     def render(self) -> str:
-        header = f"{self.timestamp} {self.tailnet} {self.type}: {self.message}"
-        return f"{header}\n{json.dumps(self.data, indent=2)}"
+        fields = [self.type, self.message, self.tailnet, str(self.timestamp)]
+        return "\n".join([*fields, json.dumps(self.data)])
 
 
 tailscale_events = TypeAdapter(list[TailscaleEvent])
