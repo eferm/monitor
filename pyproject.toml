@@ -1,0 +1,29 @@
+[project]
+name = "monitor"
+version = "0.1.0"
+description = "Webhook receiver that turns service events into email alerts"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.139.0",
+    "pydantic[email]>=2.13.4",
+    "uvicorn[standard]>=0.51.0",
+]
+
+[dependency-groups]
+dev = [
+    "basedpyright>=1.39.9",
+    "ruff>=0.15.21",
+]
+
+[tool.basedpyright]
+typeCheckingMode = "all"
+include = ["main.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+
+[tool.ruff.lint.isort]
+lines-after-imports = 2
