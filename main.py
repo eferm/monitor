@@ -51,7 +51,7 @@ class TailscaleEvent(BaseModel):
             [
                 f"Event: {self.type}",
                 f"Tailnet: {self.tailnet}",
-                str(self.timestamp),
+                self.timestamp.isoformat(timespec="seconds"),
                 json.dumps(self.data, indent=2),
             ]
         )
