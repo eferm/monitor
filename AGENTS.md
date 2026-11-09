@@ -23,9 +23,9 @@
 - Every `/hooks/*` endpoint verifies its sender's signature over the raw request body
   before parsing it. The signature check is the only access control.
 - Payloads are validated with Pydantic models declaring only the fields the
-  email uses; extra fields are ignored. The subject is `Tailscale: ` plus the
+  email uses; extra fields are ignored. The subject is `[Tailscale] ` plus the
   events' messages.
-  Each event renders as `<type>: <message>`, `Tailnet: <tailnet>`, and
+  Each event renders as `Event: <type>`, `Tailnet: <tailnet>`, and
   `timestamp` on one line each, then `data` as indented JSON, so every event
   type works without code changes.
 - Event selection belongs to the sending service's subscription settings, not

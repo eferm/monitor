@@ -49,7 +49,7 @@ class TailscaleEvent(BaseModel):
     def render(self) -> str:
         return "\n".join(
             [
-                f"{self.type}: {self.message}",
+                f"Event: {self.type}",
                 f"Tailnet: {self.tailnet}",
                 str(self.timestamp),
                 json.dumps(self.data, indent=2),
@@ -108,6 +108,6 @@ async def tailscale(
     # dict.fromkeys dedupes event messages while keeping first-seen order.
     await asyncio.to_thread(
         send,
-        "Tailscale: " + ", ".join(dict.fromkeys(event.message for event in events)),
+        "[Tailscale] " + ", ".join(dict.fromkeys(event.message for event in events)),
         "\n\n".join(event.render() for event in events),
     )
