@@ -23,8 +23,9 @@
 - Every `/hooks/*` endpoint verifies its sender's signature over the raw request body
   before parsing it. The signature check is the only access control.
 - Payloads are validated with Pydantic models declaring only the fields the
-  email uses; extra fields are ignored. Event-specific `data` is rendered as
-  indented JSON so every event type works without code changes.
+  email uses; extra fields are ignored. Each event renders as `type`, `message`,
+  `tailnet`, and `timestamp` on one line each, then `data` as indented JSON,
+  so every event type works without code changes.
 - Event selection belongs to the sending service's subscription settings, not
   to code here. Each request produces one email.
 
@@ -47,5 +48,7 @@ service-side setup in `README.md`.
 ## Deployment
 
 Docker Compose, bound to `127.0.0.1:8002`, behind an HTTPS proxy or tunnel.
+Uvicorn trusts `X-Forwarded-*` from `FORWARDED_ALLOW_IPS` (compose default:
+the Docker network ranges); the client IP is used only for access logs.
 Cloudflare Email Service SMTP (`smtp.mx.cloudflare.net:465`, implicit TLS,
 username `api_token`) for outgoing mail.

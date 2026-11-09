@@ -14,7 +14,7 @@ from typing import Annotated, ClassVar
 
 from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.responses import PlainTextResponse
-from pydantic import BaseModel, ConfigDict, EmailStr, JsonValue, NameEmail, TypeAdapter
+from pydantic import BaseModel, ConfigDict, JsonValue, NameEmail, TypeAdapter
 
 
 class Config(BaseModel):
@@ -24,7 +24,7 @@ class Config(BaseModel):
     model_config: ClassVar[ConfigDict] = ConfigDict(hide_input_in_errors=True)
 
     TAILSCALE_WEBHOOK_SECRET: str
-    MAIL_TO: EmailStr
+    MAIL_TO: NameEmail
     MAIL_SENDER: NameEmail
     SMTP_HOST: str
     SMTP_PORT: int
@@ -47,8 +47,8 @@ class TailscaleEvent(BaseModel):
     data: dict[str, JsonValue] = {}
 
     def render(self) -> str:
-        header = f"{self.timestamp} {self.tailnet} {self.type}: {self.message}"
-        return f"{header}\n{json.dumps(self.data, indent=2)}"
+        fields = [self.type, self.message, self.tailnet, str(self.timestamp)]
+        return "\n".join([*fields, json.dumps(self.data, indent=2)])
 
 
 tailscale_events = TypeAdapter(list[TailscaleEvent])
@@ -64,7 +64,7 @@ async def healthz() -> PlainTextResponse:
 def send(subject: str, body: str) -> None:
     message = EmailMessage()
     message["From"] = str(config.MAIL_SENDER)
-    message["To"] = config.MAIL_TO
+    message["To"] = str(config.MAIL_TO)
     message["Subject"] = subject
     message.set_content(body)
     with smtplib.SMTP_SSL(
